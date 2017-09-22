@@ -14,12 +14,13 @@ public abstract class Command {
     /**
      * Método onde deve ser implementado a lógica do comando
      */
-    protected abstract void execute();
+    protected abstract void execute() throws ServletException, IOException;
 
     /**
      * Método interno usado por FrontController
      */
-    final void execute(HttpServletRequest request, HttpServletResponse response) {
+    final void execute(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         this.request = request;
         this.response = response;
 
