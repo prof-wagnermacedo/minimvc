@@ -60,4 +60,83 @@ public abstract class Command {
 
         return null;
     }
+
+    protected final Object getAttribute(String name) {
+        return getAttribute(name, null);
+    }
+
+    protected final Object getAttribute(String name, String scope) {
+        if (scope == null) {
+            Object value = request.getAttribute(name);
+            if (value != null) {
+                return value;
+            }
+
+            value = request.getSession().getAttribute(name);
+            if (value != null) {
+                return value;
+            }
+
+            value = request.getServletContext().getAttribute(name);
+            if (value != null) {
+                return value;
+            }
+
+            return null;
+        }
+
+        switch (scope) {
+            case "request":
+                return request.getAttribute(name);
+
+            case "session":
+                return request.getSession().getAttribute(name);
+
+            case "application":
+                return request.getServletContext().getAttribute(name);
+
+            default:
+                throw new IllegalArgumentException("scope");
+        }
+    }
+
+    protected final void setAttribute(String name, Object value) {
+        setAttribute(name, value, null);
+    }
+
+    protected final void setAttribute(String name, Object value, String scope) {
+        if (scope == null)
+            scope = "request";
+
+        switch (scope) {
+            case "request":
+                request.setAttribute(name, value);
+                break;
+
+            case "session":
+                request.getSession().setAttribute(name, value);
+                break;
+
+            case "application":
+                request.getServletContext().setAttribute(name, value);
+                break;
+
+            default:
+                throw new IllegalArgumentException("scope");
+        }
+    }
+
+    protected final void removeAttribute(String name) {
+        removeAttribute(name, null);
+    }
+
+    protected final void removeAttribute(String name, String scope) {
+        if (scope == null) {
+            setAttribute(name, null, "request");
+            setAttribute(name, null, "session");
+            setAttribute(name, null, "application");
+        } else {
+            setAttribute(name, null, scope);
+        }
+    }
 }
