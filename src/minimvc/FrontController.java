@@ -29,31 +29,38 @@ public class FrontController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Executa um comando conforme a URL
+        String cmdName = null;
+        String cmdFunction = null;
         try {
             // Verifica se o parâmetro é um comando
             String fullCommand = request.getParameter(paramName);
             if (!isCommand(fullCommand)) {
-                response.sendError(422, "Sintaxe de comando inválida");
+                response.sendError(422, "Sintaxe de comando inválida: '" + fullCommand + "'");
             }
 
             // Obtém as partes do comando
             String[] cmdParams = fullCommand.split(":");
 
             // Inicia a instância do comando
-            String cmdName = cmdParams[0];
+            cmdName = cmdParams[0];
             @SuppressWarnings("unchecked") Class<Command> c = (Class<Command>) Class.forName(commandPackage + "." + cmdName);
             Command command = c.newInstance();
             command.init(request, response);
 
             // Realiza a chamada do método do comando
-            String cmdFunction = cmdParams.length == 2 ? cmdParams[1] : "index";
+            cmdFunction = cmdParams.length == 2 ? cmdParams[1] : "index";
             Method m = c.getMethod(cmdFunction);
             m.invoke(command);
         }
         // Se o comando ou método não existir, retorna HTTP 500
-        catch (ClassNotFoundException | IllegalAccessException | InstantiationException
-                | NoSuchMethodException | InvocationTargetException e) {
-            throw new ServletException(e);
+        catch (ClassNotFoundException e) {
+            response.sendError(422, "Comando não encontrado: '" + cmdName + "'");
+        } catch (IllegalAccessException | InstantiationException e) {
+            response.sendError(422, "Falha ao iniciar comando: '" + cmdFunction + "'");
+        } catch (NoSuchMethodException e) {
+            response.sendError(422, "Método não encontrado: '" + cmdFunction + "'");
+        } catch (InvocationTargetException e) {
+            response.sendError(422, "Falha ao chamar método: '" + cmdFunction + "'");
         }
     }
 
