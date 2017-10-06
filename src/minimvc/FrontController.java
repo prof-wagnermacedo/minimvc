@@ -9,6 +9,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+
 public class FrontController extends HttpServlet {
     private String commandPackage;
     private String paramName;
@@ -64,7 +66,7 @@ public class FrontController extends HttpServlet {
         }
     }
 
-    private static final Pattern COMMAND_RE = Pattern.compile("^[a-z_][a-z0-9_]*(?::[a-z_][a-z0-9_]*)?$");
+    private static final Pattern COMMAND_RE = Pattern.compile("^[a-z_][a-z0-9_]*(?::[a-z_][a-z0-9_]*)?$", CASE_INSENSITIVE);
 
     private boolean isCommand(String fullCommand) {
         return COMMAND_RE.matcher(fullCommand).matches();
