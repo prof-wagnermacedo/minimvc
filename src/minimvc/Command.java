@@ -6,10 +6,12 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 public abstract class Command {
     protected HttpServletRequest request;
     protected HttpServletResponse response;
+    protected PrintWriter out;
 
     /**
      * Método interno usado por FrontController
@@ -18,6 +20,7 @@ public abstract class Command {
             throws ServletException, IOException {
         this.request = request;
         this.response = response;
+        this.out = response.getWriter();
     }
 
     // Métodos utilitários
@@ -52,6 +55,14 @@ public abstract class Command {
         }
 
         return null;
+    }
+
+    protected final void addCookie(Cookie cookie) {
+        response.addCookie(cookie);
+    }
+
+    protected final String getParameter(String name) {
+        return request.getParameter(name);
     }
 
     protected final Object getAttribute(String name) {
