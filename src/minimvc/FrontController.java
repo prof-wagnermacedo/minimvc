@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.regex.Pattern;
 
 public class FrontController extends HttpServlet {
     private String commandPackage;
@@ -29,25 +30,37 @@ public class FrontController extends HttpServlet {
             throws ServletException, IOException {
         // Executa um comando conforme a URL
         try {
-            String[] cmdParams = request.getParameter(paramName).split(":");
-            if (cmdParams.length > 2) {
-                throw new IllegalArgumentException(paramName);
+            // Verifica se o parâmetro é um comando
+            String fullCommand = request.getParameter(paramName);
+            if (!isCommand(fullCommand)) {
+                response.sendError(422, "Sintaxe de comando inválida");
             }
 
+            // Obtém as partes do comando
+            String[] cmdParams = fullCommand.split(":");
+
+            // Inicia a instância do comando
             String cmdName = cmdParams[0];
             @SuppressWarnings("unchecked") Class<Command> c = (Class<Command>) Class.forName(commandPackage + "." + cmdName);
             Command command = c.newInstance();
             command.init(request, response);
 
+            // Realiza a chamada do método do comando
             String cmdFunction = cmdParams.length == 2 ? cmdParams[1] : "index";
             Method m = c.getMethod(cmdFunction);
             m.invoke(command);
         }
-        // Se o comando não existir, retorna HTTP 500
+        // Se o comando ou método não existir, retorna HTTP 500
         catch (ClassNotFoundException | IllegalAccessException | InstantiationException
                 | NoSuchMethodException | InvocationTargetException e) {
             throw new ServletException(e);
         }
+    }
+
+    private static final Pattern COMMAND_RE = Pattern.compile("^[a-z_][a-z0-9_]*(?::[a-z_][a-z0-9_]*)?$");
+
+    private boolean isCommand(String fullCommand) {
+        return COMMAND_RE.matcher(fullCommand).matches();
     }
 
     @Override
