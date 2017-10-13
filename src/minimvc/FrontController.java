@@ -34,10 +34,15 @@ public class FrontController extends HttpServlet {
         String cmdName = null;
         String cmdFunction = null;
         try {
-            // Verifica se o parâmetro é um comando
+            // Verifica o parâmetro do comando
             String fullCommand = request.getParameter(paramName);
+            if (fullCommand == null) {
+                response.sendError(422, "Comando não informado");
+                return;
+            }
             if (!isCommand(fullCommand)) {
                 response.sendError(422, "Sintaxe de comando inválida: '" + fullCommand + "'");
+                return;
             }
 
             // Obtém as partes do comando
