@@ -67,7 +67,7 @@ public class FrontController extends HttpServlet {
         } catch (NoSuchMethodException e) {
             response.sendError(422, "Método não encontrado: '" + cmdFunction + "'");
         } catch (InvocationTargetException e) {
-            throw new ServletException(e);
+            throw new ServletException(e.getCause());
         }
     }
 
