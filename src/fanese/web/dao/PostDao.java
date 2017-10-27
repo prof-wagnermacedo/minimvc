@@ -13,7 +13,7 @@ public class PostDao {
 
     public Post obter(int id) {
         String query =
-            "SELECT id, titulo, horario, texto " +
+            "SELECT id, titulo, horario, texto, modificado " +
             "FROM Posts " +
             "WHERE id=:id";
 
@@ -70,15 +70,15 @@ public class PostDao {
     public boolean modificar(Post post) {
         String query =
             "UPDATE Posts " +
-            "SET titulo = :titulo, horario = :horario, texto = :texto " +
+            "SET titulo = :titulo, texto = :texto, modificado = :modificado " +
             "WHERE id = :id";
 
         try (Connection con = db.open()) {
             con.createQuery(query)
                 .addParameter("id", post.getId())
                 .addParameter("titulo", post.getTitulo())
-                .addParameter("horario", post.getHorario())
                 .addParameter("texto", post.getTexto())
+                .addParameter("modificado", post.getModificado())
                 .executeUpdate();
 
             return con.getResult() > 0;

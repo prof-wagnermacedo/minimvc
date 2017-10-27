@@ -7,6 +7,7 @@ public class Post {
     private String titulo;
     private Date horario;
     private String texto;
+    private Date modificado;
 
     public int getId() {
         return id;
@@ -38,5 +39,13 @@ public class Post {
 
     public void setTexto(String texto) {
         this.texto = texto;
+    }
+
+    public Date getModificado() {
+        return modificado;
+    }
+
+    public void setModificado(Date modificado) {
+        this.modificado = modificado;
     }
 }

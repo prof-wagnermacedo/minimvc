@@ -11,6 +11,7 @@
         <ul>
             <li><a href="${control}=Posts:index">Lista de Posts</a></li>
             <li><a href="${control}=Posts:publicar">Novo Post</a></li>
+            <li><a href="${control}=Posts:index&amp;admin">Modifique Posts</a></li>
         </ul>
     </nav>
 

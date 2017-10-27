@@ -19,6 +19,10 @@ public class Posts extends Command {
         List<Post> posts = dao.obterVisiveis();
         setAttribute("posts", posts);
 
+        // Verifica se lista como administrador, mostrando link para modificar posts
+        boolean isAdmin = getParameter("admin") != null;
+        setAttribute("isAdmin", isAdmin);
+
         // Encaminha para a página mestre
         String params = "include=/posts/lista.jsp&title=Lista de Posts";
         forward("/master-page.jsp?" + params);
@@ -83,6 +87,47 @@ public class Posts extends Command {
         else {
             // Encaminha para a página mestre
             String params = "include=/posts/adicionar.jsp&title=Publique um post";
+            forward("/master-page.jsp?" + params);
+        }
+    }
+
+    public void atualizar() throws ServletException, IOException, ParseException {
+        PostDao dao = new PostDao();
+
+        // Obtém e converte id
+        int id = Integer.parseInt(getParameter("id"));
+
+        if ("POST".equals(request.getMethod())) {
+            // Obtém os outros parâmetros da requisição
+            String titulo = getParameter("titulo");
+            String texto  = getParameter("texto");
+
+            // Prepara o objeto de modificação
+            Post post = new Post();
+            post.setId(id);
+            post.setTitulo(titulo);
+            post.setTexto(texto);
+
+            // Define o horário de modificação
+            Date agora = new Date();
+            post.setModificado(agora);
+
+            // Tenta inserir o post no banco de dados
+            if (!dao.modificar(post)) {
+                response.sendError(400, "Erro inesperado ao modificar");
+                return;
+            }
+
+            // Redireciona para a visualização do post modificado
+            redirect(contextUrl("/ctrl?command=Posts:visualizar&id=" + id));
+        }
+        else {
+            // Obtém post do banco de dados
+            Post post = dao.obter(id);
+            setAttribute("post", post);
+
+            // Encaminha para a página mestre
+            String params = "include=/posts/modificar.jsp&title=Modifique um post";
             forward("/master-page.jsp?" + params);
         }
     }
