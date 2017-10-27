@@ -6,3 +6,5 @@
 
 /src/commands/CommandImpl.java
 /web/WEB-INF/build.xml
+
+/src/fanese/web/dao/DaoBasics.java
