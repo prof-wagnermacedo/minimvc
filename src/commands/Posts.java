@@ -16,7 +16,7 @@ public class Posts extends Command {
         PostDao dao = new PostDao();
 
         // Obtém lista de posts do banco de dados
-        List<Post> posts = dao.obterTodos();
+        List<Post> posts = dao.obterVisiveis();
         setAttribute("posts", posts);
 
         // Encaminha para a página mestre
@@ -33,6 +33,15 @@ public class Posts extends Command {
 
         // Obtém post do banco de dados
         Post post = dao.obter(id);
+
+        // Verifica se o post está apto a ser visualizado
+        Date agora = new Date();
+        if (agora.before(post.getHorario())) {
+            response.sendError(404, "Página não existe");
+            return;
+        }
+
+        // Define o atributo da camada view
         setAttribute("post", post);
 
         // Encaminha para a página mestre

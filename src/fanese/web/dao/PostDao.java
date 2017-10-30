@@ -35,6 +35,18 @@ public class PostDao {
         }
     }
 
+    public List<Post> obterVisiveis() {
+        String query =
+            "SELECT id, titulo, horario, texto " +
+            "FROM Posts " +
+            "WHERE horario <= GETDATE()";
+
+        try (Connection con = db.open()) {
+            return con.createQuery(query)
+                .executeAndFetch(Post.class);
+        }
+    }
+
     public boolean adicionar(Post post) {
         String query =
             "INSERT INTO Posts (titulo, horario, texto) " +
