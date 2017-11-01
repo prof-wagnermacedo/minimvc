@@ -10,6 +10,9 @@
     Título:<br>
         <input type="text" name="titulo" value="${post.titulo}">
     <br><br>
+    Tag:<br>
+        <input type="text" name="tag" value="${tag.nome}">
+    <br><br>
     Texto:<br>
         <textarea name="texto" id="" cols="30" rows="10">${post.texto}</textarea>
     <br><br>

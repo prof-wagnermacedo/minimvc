@@ -13,12 +13,13 @@ public class PostDao {
 
     public Post obter(int id) {
         String query =
-            "SELECT id, titulo, horario, texto, modificado " +
+            "SELECT id, titulo, horario, texto, modificado, tag_id " +
             "FROM Posts " +
             "WHERE id=:id";
 
         try (Connection con = db.open()) {
             return con.createQuery(query)
+                .addColumnMapping("tag_id", "tagId")
                 .addParameter("id", id)
                 .executeAndFetchFirst(Post.class);
         }
@@ -49,14 +50,16 @@ public class PostDao {
 
     public boolean adicionar(Post post) {
         String query =
-            "INSERT INTO Posts (titulo, horario, texto) " +
-            "VALUES (:titulo, :horario, :texto)";
+            "INSERT INTO Posts (titulo, horario, texto, tag_id) " +
+            "VALUES (:titulo, :horario, :texto, :tag)";
 
         try (Connection con = db.open()) {
             con.createQuery(query)
+                .addColumnMapping("tag_id", "tagId")
                 .addParameter("titulo", post.getTitulo())
                 .addParameter("horario", post.getHorario())
                 .addParameter("texto", post.getTexto())
+                .addParameter("tag", post.getTagId())
                 .executeUpdate();
 
             // Obtém id gerado automaticamente pelo SGBD
@@ -70,15 +73,17 @@ public class PostDao {
     public boolean modificar(Post post) {
         String query =
             "UPDATE Posts " +
-            "SET titulo = :titulo, texto = :texto, modificado = :modificado " +
+            "SET titulo = :titulo, texto = :texto, modificado = :modificado, tag_id = :tag " +
             "WHERE id = :id";
 
         try (Connection con = db.open()) {
             con.createQuery(query)
+                .addColumnMapping("tag_id", "tagId")
                 .addParameter("id", post.getId())
                 .addParameter("titulo", post.getTitulo())
                 .addParameter("texto", post.getTexto())
                 .addParameter("modificado", post.getModificado())
+                .addParameter("tag", post.getTagId())
                 .executeUpdate();
 
             return con.getResult() > 0;

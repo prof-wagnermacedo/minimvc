@@ -8,6 +8,9 @@
     Título:<br>
         <input type="text" name="titulo">
     <br><br>
+    Tag:<br>
+        <input type="text" name="tag">
+    <br><br>
     Texto:<br>
         <textarea name="texto" id="" cols="30" rows="10"></textarea>
     <br><br>

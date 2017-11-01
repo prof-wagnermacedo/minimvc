@@ -8,6 +8,7 @@ public class Post {
     private Date horario;
     private String texto;
     private Date modificado;
+    private Integer tagId;
 
     public int getId() {
         return id;
@@ -47,5 +48,13 @@ public class Post {
 
     public void setModificado(Date modificado) {
         this.modificado = modificado;
+    }
+
+    public Integer getTagId() {
+        return tagId;
+    }
+
+    public void setTagId(Integer tagId) {
+        this.tagId = tagId;
     }
 }

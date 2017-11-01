@@ -24,6 +24,19 @@ public class TagDao {
         }
     }
 
+    public Tag obterPorNome(String nome) {
+        String query =
+            "SELECT id, nome " +
+            "FROM Tags " +
+            "WHERE nome = :nome";
+
+        try (Connection con = db.open()) {
+            return con.createQuery(query)
+                .addParameter("nome", nome)
+                .executeAndFetchFirst(Tag.class);
+        }
+    }
+
     public List<Tag> obterTodos() {
         String query =
             "SELECT id, nome " +

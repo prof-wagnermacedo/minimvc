@@ -1,7 +1,9 @@
 package commands;
 
 import fanese.web.dao.PostDao;
+import fanese.web.dao.TagDao;
 import fanese.web.model.Post;
+import fanese.web.model.Tag;
 import minimvc.Command;
 
 import javax.servlet.ServletException;
@@ -45,6 +47,15 @@ public class Posts extends Command {
             return;
         }
 
+        // Define, se houver, o atributo tag
+        Integer tagId = post.getTagId();
+        if (tagId != null) {
+            TagDao tagDao = new TagDao();
+
+            Tag tag = tagDao.obter(tagId);
+            setAttribute("tag", tag);
+        }
+
         // Define o atributo da camada view
         setAttribute("post", post);
 
@@ -69,11 +80,18 @@ public class Posts extends Command {
             String titulo = getParameter("titulo");
             String texto  = getParameter("texto");
 
+            // Obtém o parâmetro tag
+            String tagNome = getParameter("tag");
+
+            // Obtém o id da tag existente ou nova
+            Integer tagId = obterOuCriarTag(tagNome);
+
             // Prepara o objeto para inserção
             Post post = new Post();
             post.setHorario(horario);
             post.setTitulo(titulo);
             post.setTexto(texto);
+            post.setTagId(tagId);
 
             // Tenta inserir o post no banco de dados
             if (!dao.adicionar(post)) {
@@ -102,11 +120,18 @@ public class Posts extends Command {
             String titulo = getParameter("titulo");
             String texto  = getParameter("texto");
 
+            // Obtém o parâmetro tag
+            String tagNome = getParameter("tag");
+
+            // Obtém o id da tag existente ou nova
+            Integer tagId = obterOuCriarTag(tagNome);
+
             // Prepara o objeto de modificação
             Post post = new Post();
             post.setId(id);
             post.setTitulo(titulo);
             post.setTexto(texto);
+            post.setTagId(tagId);
 
             // Define o horário de modificação
             Date agora = new Date();
@@ -126,9 +151,45 @@ public class Posts extends Command {
             Post post = dao.obter(id);
             setAttribute("post", post);
 
+            // Obtém, se necessário, a tag do banco de dados
+            Integer tagId = post.getTagId();
+            if (tagId != null) {
+                TagDao tagDao = new TagDao();
+                setAttribute("tag", tagDao.obter(tagId));
+            }
+
             // Encaminha para a página mestre
             String params = "include=/posts/modificar.jsp&title=Modifique um post";
             forward("/master-page.jsp?" + params);
         }
+    }
+
+    private Integer obterOuCriarTag(String tagNome) {
+        if (tagNome != null) {
+            // Limpa espaços em branco antes de continuar
+            tagNome = tagNome.trim();
+
+            // Se o nome da tag não está vazio...
+            if (!tagNome.isEmpty()) {
+                TagDao tagDao = new TagDao();
+
+                // ...obtém o id da tag
+                Tag tag = tagDao.obterPorNome(tagNome);
+                if (tag != null) {
+                    return tag.getId();
+                }
+
+                // Mas se não existe tag, então cria uma nova...
+                tag = new Tag();
+                tag.setNome(tagNome);
+
+                // ...e utiliza o novo id
+                tagDao.adicionar(tag);
+                return tag.getId();
+            }
+        }
+
+        // Se não foi passada uma tag
+        return null;
     }
 }
