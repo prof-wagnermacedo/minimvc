@@ -1,8 +1,10 @@
 package fanese.web.dao;
 
 import fanese.web.model.Post;
+import fanese.web.model.Tag;
 import org.sql2o.Connection;
 
+import java.util.Collections;
 import java.util.List;
 
 public class PostDao {
@@ -44,6 +46,20 @@ public class PostDao {
 
         try (Connection con = db.open()) {
             return con.createQuery(query)
+                .executeAndFetch(Post.class);
+        }
+    }
+
+    public List<Post> obterPorTag(String nome) {
+        String query =
+            "SELECT p.id, p.titulo, p.horario, p.texto " +
+            "FROM Posts p " +
+            "JOIN Tags t ON p.tag_id = t.id " +
+            "WHERE p.horario < GETDATE() and t.nome = :nome";
+
+        try (Connection con = db.open()) {
+            return con.createQuery(query)
+                .addParameter("nome", nome)
                 .executeAndFetch(Post.class);
         }
     }

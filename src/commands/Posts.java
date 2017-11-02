@@ -192,4 +192,27 @@ public class Posts extends Command {
         // Se não foi passada uma tag
         return null;
     }
+
+    public void porTag() throws ServletException, IOException {
+        PostDao dao = new PostDao();
+
+        // Obtém o parâmetro da requisição
+        String tag = getParameter("filtro");
+        tag = (tag == null) ? "" : tag.trim();
+
+        // Se não foi passada uma tag, então, obtém todos
+        if (tag.isEmpty()) {
+            setAttribute("posts", dao.obterTodos());
+        }
+        // caso contrário, obtém apenas os marcados pela tag
+        else {
+            setAttribute("posts", dao.obterPorTag(tag));
+        }
+
+        // Mostra link para modificar posts se tiver parâmetro admin
+        boolean isAdmin = getParameter("admin") != null;
+        setAttribute("isAdmin", isAdmin);
+
+        forward("/posts/quadro.jsp");
+    }
 }
