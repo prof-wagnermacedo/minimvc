@@ -4,6 +4,23 @@
 
 <c:url var="control" value="/ctrl?command"/>
 
+<form>
+    Filtrar por tag: <input name="filtro" list="tags">
+    <datalist id="tags"></datalist>
+    <button type="submit">Buscar</button>
+</form>
+
+<script>
+    $(function () {
+        $("input[name='filtro']").keyup(function () {
+            $.get("${control}=Tags:opcoes", {filtro: this.value})
+                .done(function (response) {
+                    $("#tags").html(response);
+                });
+        });
+    });
+</script>
+
 <c:if test="${isAdmin}">
     <p>Modifique um post clicando em 📝</p>
 </c:if>

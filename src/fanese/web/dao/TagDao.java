@@ -48,6 +48,19 @@ public class TagDao {
         }
     }
 
+    public List<Tag> obterIniciamPor(String caracteres) {
+        String query =
+            "SELECT id, nome " +
+            "FROM Tags " +
+            "WHERE nome LIKE :filtro";
+
+        try (Connection con = db.open()) {
+            return con.createQuery(query)
+                .addParameter("filtro", caracteres + "%")
+                .executeAndFetch(Tag.class);
+        }
+    }
+
     public boolean adicionar(Tag tag) {
         String query =
             "INSERT INTO Tags (nome) " +
