@@ -6,6 +6,7 @@
 <html>
 <head>
     <title>Lista de Tarefas</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <style>
         #tarefas {
             list-style: none;
@@ -38,8 +39,34 @@
         </c:forEach>
         </ul>
 
-        <button type="submit" formaction="${comando}:completar">Completar</button>
-        <button type="submit" formaction="${comando}:excluir">Excluir</button>
+        <button id="completar" type="submit" formaction="${comando}:completar">Completar</button>
+        <button id="excluir" type="submit" formaction="${comando}:excluir">Excluir</button>
     </form>
+
+    <script>
+        $("#completar, #excluir").click(function (evt) {
+            // Impede o envio do formulário
+            evt.preventDefault();
+
+            // Inicia variáveis usadas na comunicação AJAX
+            var url = this.getAttribute("formaction");
+            var acao = this.id;
+
+            // Dados a serem enviados
+            var tarefa = $(this.form).find("input[name='tarefa']:checked");
+            var dados = {tarefa: tarefa.val()};
+
+            $.post(url, dados)
+                .done(function () {
+                    var item = tarefa.closest("li");
+
+                    if (acao === "completar") {
+                        item.addClass("concluida-true");
+                    } else {
+                        item.remove();
+                    }
+                });
+        });
+    </script>
 </body>
 </html>

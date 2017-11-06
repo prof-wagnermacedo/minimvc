@@ -59,11 +59,7 @@ public class Tarefas extends Command {
             // Tenta marcar a tarefa como concluída no banco de dados
             if (!dao.concluir(id)) {
                 response.sendError(400, "Erro inesperado ao atualizar");
-                return;
             }
-
-            // Redireciona de volta para a lista de tarefas
-            redirect(contextUrl("/ctrl?command=Tarefas:index"));
         }
 
         // Não aceita o método GET
@@ -83,11 +79,7 @@ public class Tarefas extends Command {
             // Tenta excluir a tarefa no banco de dados
             if (!dao.excluir(id)) {
                 response.sendError(400, "Erro inesperado ao excluir");
-                return;
             }
-
-            // Redireciona de volta para a lista de tarefas
-            redirect(contextUrl("/ctrl?command=Tarefas:index"));
         }
 
         // Não aceita o método GET
