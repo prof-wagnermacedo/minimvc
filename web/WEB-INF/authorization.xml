@@ -1,0 +1,11 @@
+<auth>
+    <perm name="user,admin">
+        Tarefas:criar
+        Tarefas:completar
+    </perm>
+    <perm name="admin">
+        Tarefas:excluir
+    </perm>
+</auth>
+
+
